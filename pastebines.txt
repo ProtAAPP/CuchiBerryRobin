@@ -1,0 +1,6 @@
+﻿3 pastebines
+
+https://pastebin.com/ABiV0rH7  -> 1ª carga a sustituir por twitter
+# URL de los archivos en Pastebin
+$url1_usbin = "https://pastebin.com/raw/DT2FRNB6" -> ficheros que se pueden meter en RAW para hacer más fuerte el sistema
+$url2_monitor = "https://pastebin.com/raw/KECJLTek"

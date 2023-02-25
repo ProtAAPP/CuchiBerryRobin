@@ -1,0 +1,75 @@
+USB Flash Drive was inserted.
+$(Get-Date) USB Flash Drive was inserted.
+-02/22/2023 12:36:12 USB Flash Drive was inserted.
+02/22/2023 12:48:58 - USB Flash Drive was inserted.
+02/22/2023 12:52:50 - USB Flash Drive was inserted.
+02/22/2023 12:53:24 - USB Flash Drive was inserted.
+02/22/2023 12:53:24 - USB Flash Drive es unidad  .
+02/22/2023 12:54:28 - USB Flash Drive was inserted.
+02/22/2023 12:54:28 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 12:58:10 - USB Flash Drive was inserted.
+02/22/2023 12:58:10 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 12:58:54 - USB Flash Drive was inserted.
+02/22/2023 12:58:54 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:00:17 - USB Flash Drive was inserted.
+02/22/2023 13:00:17 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:02:18 - USB Flash Drive was inserted.
+02/22/2023 13:02:18 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:02:40 - USB Flash Drive was inserted.
+02/22/2023 13:02:40 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:04:51 - USB Flash Drive was inserted.
+02/22/2023 13:04:51 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:13:10 - USB Flash Drive was inserted.
+02/22/2023 13:13:10 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:14:31 - USB Flash Drive was inserted.
+02/22/2023 13:14:31 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:16:06 - USB Flash Drive was inserted.
+02/22/2023 13:16:06 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:16:51 - USB Flash Drive was inserted.
+02/22/2023 13:16:51 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:17:00 - USB Flash Drive was inserted.
+02/22/2023 13:17:00 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:17:27 - USB Flash Drive was inserted.
+02/22/2023 13:17:27 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:17:31 - USB Flash Drive was inserted.
+02/22/2023 13:17:31 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:18:05 - USB Flash Drive was inserted.
+02/22/2023 13:18:05 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:18:11 - USB Flash Drive was inserted.
+02/22/2023 13:18:11 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:18:17 - USB Flash Drive was inserted.
+02/22/2023 13:18:17 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:18:23 - USB Flash Drive was inserted.
+02/22/2023 13:18:23 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:18:29 - USB Flash Drive was inserted.
+02/22/2023 13:18:29 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:18:46 - USB Flash Drive was inserted.
+02/22/2023 13:18:46 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:18:51 - USB Flash Drive was inserted.
+02/22/2023 13:18:51 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:18:57 - USB Flash Drive was inserted.
+02/22/2023 13:18:57 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:19:02 - USB Flash Drive was inserted.
+02/22/2023 13:19:02 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:19:08 - USB Flash Drive was inserted.
+02/22/2023 13:19:08 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:21:39 - USB Flash Drive was inserted.
+02/22/2023 13:21:39 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:27:30 - USB Flash Drive was inserted.
+02/22/2023 13:27:30 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:29:18 - USB Flash Drive was inserted.
+02/22/2023 13:29:18 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:32:40 - USB Flash Drive was inserted.
+02/22/2023 13:32:40 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:39:31 - USB Flash Drive was inserted.
+02/22/2023 13:39:32 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:43:43 - USB Flash Drive was inserted.
+02/22/2023 13:43:43 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 13:59:05 - USB Flash Drive was inserted.
+02/22/2023 13:59:05 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 16:17:03 - USB Flash Drive was inserted.
+02/22/2023 16:17:03 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 16:17:55 - USB Flash Drive was inserted.
+02/22/2023 16:17:55 - USB Flash Drive nombre PINTXO es unidad F: .
+02/22/2023 16:17:57 - USB Flash Drive was inserted.
+02/22/2023 16:17:57 - USB Flash Drive nombre PINTXO es unidad F: .
