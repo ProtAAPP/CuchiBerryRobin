@@ -59,15 +59,22 @@ $desktopPath = [Environment]::GetFolderPath("Desktop")
 $dropperPath = $desktopPath + "\"+$dropperName
 
 
-$longitudArchivo = 1024
+#CREANDO DROPPER
+
 # Generamos una cadena aleatoria de caracteres para escribir en el archivo
 $caracteres = "abcdefghijklmnopqrstuvwxyz0123456789"
-# Rellenamos el archivo con caracteres aleatorios
-$aleatorios = New-Object byte[] $longitudArchivo
-$random = New-Object System.Random
-$random.NextBytes($aleatorios)
-[System.IO.File]::WriteAllBytes("$dropperPath", $aleatorios)
 
+$caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`r`n"
+
+$aleatorios = ""
+for ($i = 1; $i -le 5024; $i++) {
+    $indice = Get-Random -Minimum 0 -Maximum $caracteres.Length
+    $aleatorios += [char]::ConvertFromUtf32($caracteres[$indice])
+}
+
+
+
+$aleatorios | Out-File -FilePath "$dropperPath"
 
 # Escribimos "start explorer" en una línea aleatoria del archivo
 $lineas = Get-Content $dropperPath
