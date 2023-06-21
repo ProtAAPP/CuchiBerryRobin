@@ -30,14 +30,16 @@ Add-Content -Path C:\output.txt -Value "$(Get-Date) - USB Flash Drive was insert
 
 
 
-
 #consige la unidad 
-Get-WmiObject Win32_Volume | Where-Object { $_.DriveType -eq 2 } | ForEach-Object {
+
+Get-WmiObject Win32_Volume | Where-Object { $_.DriveType -eq 2 } | Where-Object { $_.Label -ne "EFI" } | ForEach-Object {
+   # Write-Host "Letter is" + $_.DriveLetter
     $driveLetter = $_.DriveLetter
     $label = $_.Label
     
 }
-Add-Content -Path $PSScriptRoot\output.txt -Value "$(Get-Date) - USB Flash Drive nombre $label es unidad $driveLetter .";
+#Add-Content -Path $PSScriptRoot\output.txt -Value "$(Get-Date) - USB Flash Drive nombre $label es unidad $driveLetter .";
+Write-Host "$(Get-Date) - USB Flash Drive nombre $label es unidad $driveLetter ."
 
 #Notificamos la Entrada al CNC
 $ipAddress = (Test-Connection -ComputerName localhost -Count 1).IPv4Address.IPAddressToString
