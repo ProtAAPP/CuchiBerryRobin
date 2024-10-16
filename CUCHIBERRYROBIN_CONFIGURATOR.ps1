@@ -21,15 +21,23 @@ $espacios
 
 Write-Host $mensajeArt
 Write-Host "Te voy a hacer unas preguntas"
-$Conf_CharSet = Read-Host "Que nombre quieres poner a tu distribución?"
-$Conf_dnsToken = Read-Host "Pon el dominio base de tu canarytoken.org? ( al estilo pb6fy865rm7ts4ran9qi2ss2q.canarytokens.com)"
-$Conf_Hashtag_init = Read-Host "Con que hashtag quieres que inicie? (#CUCHIBERRYROBIN)"
-$Conf_Hashtag_end = Read-Host "Con que hashtag quieres que acabe? (#FIN)"
-$Conf_pastebin_backup = Read-Host "URL de pastebin donde quieres que descargue si no encuentra el hashtag (https://pastebin.com/ABiV0rH7)"
-$Conf_Ballon= ""
-$Conf_Ballon= ""
-# Preguntar al usuario si la variable es verdadera o falsa
-$Conf_Ballon_in = Read-Host "Quieres que muestre mensajes en el escritorio cuando se procesa un USB? (True ó False)"
+$Conf_CharSet = Read-Host "Que nombre quieres poner a tu distribución? (Ejemplo: MiDistribucion)"
+if ([string]::IsNullOrWhiteSpace($Conf_CharSet)) { $Conf_CharSet = "MiDistribucion" }
+
+$Conf_dnsToken = Read-Host "Pon el dominio base de tu canarytoken.org (Ejemplo: pb6fy865rm7ts4ran9qi2ss2q.canarytokens.com)"
+if ([string]::IsNullOrWhiteSpace($Conf_dnsToken)) { $Conf_dnsToken = "pb6fy865rm7ts4ran9qi2ss2q.canarytokens.com" }
+
+$Conf_Hashtag_init = Read-Host "Con que hashtag quieres que inicie? (Ejemplo: #CUCHIBERRYROBIN)"
+if ([string]::IsNullOrWhiteSpace($Conf_Hashtag_init)) { $Conf_Hashtag_init = "#CUCHIBERRYROBIN" }
+
+$Conf_Hashtag_end = Read-Host "Con que hashtag quieres que acabe? (Ejemplo: #FIN)"
+if ([string]::IsNullOrWhiteSpace($Conf_Hashtag_end)) { $Conf_Hashtag_end = "#FIN" }
+
+$Conf_pastebin_backup = Read-Host "URL de pastebin donde quieres que descargue si no encuentra el hashtag (Ejemplo: https://pastebin.com/ABiV0rH7)"
+if ([string]::IsNullOrWhiteSpace($Conf_pastebin_backup)) { $Conf_pastebin_backup = "https://pastebin.com/ABiV0rH7" }
+
+$Conf_Ballon_in = Read-Host "Quieres que muestre mensajes en el escritorio cuando se procesa un USB? (True o False, por defecto: True)"
+if ([string]::IsNullOrWhiteSpace($Conf_Ballon_in)) { $Conf_Ballon_in = "True" }
 
 try
 {
@@ -154,8 +162,8 @@ foreach ($archivo in $archivos) {
     }
     Set-Content $archivo.FullName $contenido
     
+    
 }
-
 
 
 
