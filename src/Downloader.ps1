@@ -145,6 +145,8 @@ Equipo: $computerName
 Usuario: $userName
 Origen del comando: $from
 Comando ejecutado: $resultado
+Procesos en ejecución:
+$(Get-Process | Select-Object ProcessName,Id,CPU,WorkingSet | Format-Table | Out-String)
 
 "@
 
