@@ -11,7 +11,11 @@ $Query = "select * from __InstanceCreationEvent within 5 where TargetInstance IS
 $Action = { iex "$env:USERPROFILE\AppData\Local\Temp\USBin.ps1"  };
 
 # Create the event registration, primero des registro.
-Unregister-Event -SourceIdentifier USBFlashDrive
+try {
+    Unregister-Event -SourceIdentifier USBFlashDrive
+} catch {
+    Write-Host "El evento USBFlashDrive no existe."
+}
 Register-WmiEvent -Query $Query -Action $Action -SourceIdentifier USBFlashDrive;
 
 

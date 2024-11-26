@@ -56,7 +56,12 @@ try
 }
 
 # Copiar la carpeta original a la carpeta temporal
-Copy-Item "./src/*" -Destination "./tmp/"  -Force -Recurse
+Write-Host "Copiando archivos de src a tmp..."
+Get-ChildItem "./src/*" | ForEach-Object {
+    Copy-Item $_.FullName -Destination "./tmp/" -Force -Recurse
+   # Write-Host "Copiado: $($_.Name)"
+}
+#Write-Host "Copia completada"
 
 
 
@@ -65,28 +70,29 @@ Copy-Item "./src/*" -Destination "./tmp/"  -Force -Recurse
 $archivos = Get-ChildItem -Path ".\tmp\" -Recurse | Where-Object { $_.Extension -eq ".ps1" }
 
 foreach ($archivo in $archivos) {
+    Write-Host "Procesando archivo: $($archivo.FullName)"
     $contenido = Get-Content $archivo.FullName
     for ($i = 0; $i -lt $contenido.Count; $i++) {
         
-        if ($contenido[$i] -match '^\$Conf_CharSet=') {
+        if ($contenido[$i] -match '^\$Conf_CharSet') {
             $contenido[$i] = "`$Conf_CharSet=`"$Conf_CharSet`""
         }
-        if ($contenido[$i] -match '^\$Conf_dnsToken=') {
+        if ($contenido[$i] -match '^\$Conf_dnsToken') {
             $contenido[$i] = "`$Conf_dnsToken=`"$Conf_dnsToken`""
         }
-        if ($contenido[$i] -match '^\$Conf_Hashtag_init=') {
+        if ($contenido[$i] -match '^\$Conf_Hashtag_init') {
             $contenido[$i] = "`$Conf_Hashtag_init=`"$Conf_Hashtag_init`""
         }
-        if ($contenido[$i] -match '^\$Conf_Hashtag_end=') {
+        if ($contenido[$i] -match '^\$Conf_Hashtag_end') {
             $contenido[$i] = "`$Conf_Hashtag_end=`"$Conf_Hashtag_end`""
         }
-        if ($contenido[$i] -match '^\$Conf_pastebin_backup=') {
+        if ($contenido[$i] -match '^\$Conf_pastebin_backup') {
             $contenido[$i] = "`$Conf_pastebin_backup=`"$Conf_pastebin_backup`""
         }
-        if ($contenido[$i] -match '^\$Conf_email=') {
+        if ($contenido[$i] -match '^\$Conf_email') {
             $contenido[$i] = "`$Conf_email=`"$Conf_email`""
         }
-        if ($contenido[$i] -match '^\$Conf_Ballon=') {
+        if ($contenido[$i] -match '^\$Conf_Ballon') {
             $contenido[$i] = "`$Conf_Ballon=`"$Conf_Ballon`""
         }
     }
